@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Capybara Creative House</title>
+<script>
+/* Arriving from projects.html's curtain: keep the screen covered until GSAP lifts it */
+try{if(sessionStorage.getItem('capyCurtain')){document.documentElement.classList.add('from-curtain');setTimeout(function(){document.documentElement.classList.remove('from-curtain');},3000);}}catch(e){}
+</script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 @font-face{font-family:'Stack Sans';src:url('Font/StackSans/StackSansText-VariableFont_wght.ttf') format('truetype-variations');font-weight:100 900;font-display:swap;}
@@ -26,15 +30,20 @@
   --border:#E4E4E4;
   --border-dark:rgba(255,255,255,0.08);
 }
-html{scroll-behavior:smooth;}
-body{font-family:'Stack Sans',sans-serif;font-weight:200;background:#fff;color:var(--dark);overflow-x:hidden;cursor:none;}
+html.lenis,html.lenis body{height:auto;}
+.lenis.lenis-smooth{scroll-behavior:auto!important;}
+.lenis.lenis-stopped{overflow:hidden;}
+
+/* Page curtain — covers the screen before going to projects.html */
+.page-curtain{position:fixed;inset:0;z-index:9999;pointer-events:none;}
+.page-curtain div{position:absolute;inset:0;transform:translateY(100%);}
+.page-curtain .pc-orange{background:var(--orange);}
+.page-curtain .pc-dark{background:#0B0B0B;}
+.from-curtain .page-curtain div{transform:none;}
+body{font-family:'Stack Sans',sans-serif;font-weight:200;background:#fff;color:var(--dark);overflow-x:hidden;}
 h1,h2,h3,h4,h5,h6,strong,b{font-family:'Stack Sans',sans-serif;font-weight:200;}
 .hi{font-family:'Stack Sans',sans-serif!important;font-weight:200!important;}
 
-/* Custom cursor */
-.cursor{position:fixed;width:10px;height:10px;background:var(--orange);border-radius:50%;pointer-events:none;z-index:9999;transition:transform 0.15s ease;mix-blend-mode:multiply;}
-.cursor-follower{position:fixed;width:36px;height:36px;border:1px solid var(--orange);border-radius:50%;pointer-events:none;z-index:9998;transition:all 0.1s ease;opacity:0.4;}
-body:has(a:hover) .cursor{transform:scale(2.5);}
 
 /* ── Navbar: floating dark pill ── */
 nav{position:fixed;top:16px;left:50%;transform:translate(-50%,0);z-index:100;padding:0 8px 0 20px;height:52px;display:flex;align-items:center;gap:0;background:var(--nav-bg);border-radius:100px;box-shadow:0 4px 32px rgba(0,0,0,0.28);transition:transform 0.4s cubic-bezier(0.22,1,0.36,1),height 0.3s ease,background 0.3s ease,box-shadow 0.3s ease;}
@@ -52,10 +61,10 @@ nav.nav-scrolled{height:46px;background:rgba(38,38,38,0.82);backdrop-filter:blur
 .nav-links a.active{color:#fff;}
 .nav-links a.active::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--orange);}
 .nav-actions{display:flex;align-items:center;gap:6px;margin-left:10px;}
-.nav-btn-icon{width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;text-decoration:none;transition:background 0.2s;border:none;cursor:none;}
+.nav-btn-icon{width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;text-decoration:none;transition:background 0.2s;border:none;cursor:pointer;}
 .nav-btn-icon:hover{background:rgba(255,255,255,0.14);}
 .nav-btn-icon svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
-.nav-btn-cta{width:38px;height:38px;border-radius:12px;background:var(--orange);display:flex;align-items:center;justify-content:center;text-decoration:none;transition:background 0.2s;border:none;cursor:none;}
+.nav-btn-cta{width:38px;height:38px;border-radius:12px;background:var(--orange);display:flex;align-items:center;justify-content:center;text-decoration:none;transition:background 0.2s;border:none;cursor:pointer;}
 .nav-btn-cta:hover{background:var(--orange-light);}
 .nav-btn-cta svg{width:17px;height:17px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 
@@ -293,7 +302,7 @@ section{padding:112px 56px;}
 .portfolio-view-all{font-size:13px;color:rgba(255,255,255,0.35);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
 .portfolio-view-all:hover{color:var(--orange);}
 .cat-tabs{padding:0 56px 44px;display:flex;gap:8px;flex-wrap:wrap;}
-.cat-tab{font-size:12.5px;font-weight:200;font-family:'Stack Sans',sans-serif;padding:8px 18px;border-radius:100px;border:1px solid var(--border-dark);color:rgba(255,255,255,0.4);background:transparent;cursor:none;transition:all 0.2s;}
+.cat-tab{font-size:12.5px;font-weight:200;font-family:'Stack Sans',sans-serif;padding:8px 18px;border-radius:100px;border:1px solid var(--border-dark);color:rgba(255,255,255,0.4);background:transparent;cursor:pointer;transition:all 0.2s;}
 .cat-tab.active{background:var(--orange);color:#fff;border-color:var(--orange);}
 .cat-tab:hover:not(.active){border-color:rgba(255,255,255,0.3);color:rgba(255,255,255,0.85);}
 .cat-panel{display:none;padding:0 56px 0;}
@@ -309,7 +318,7 @@ section{padding:112px 56px;}
 
 /* Portfolio grid */
 .porto-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;margin-top:2px;background:rgba(255,255,255,0.04);}
-.porto-card{background:var(--dark);aspect-ratio:4/3;position:relative;overflow:hidden;cursor:none;}
+.porto-card{background:var(--dark);aspect-ratio:4/3;position:relative;overflow:hidden;cursor:pointer;}
 .porto-card:hover .porto-placeholder{transform:scale(1.03);}
 .porto-card:hover .porto-overlay{opacity:1;}
 .porto-placeholder{width:100%;height:100%;background:linear-gradient(145deg,#252525 0%,#181818 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;transition:transform 0.4s ease;}
@@ -491,7 +500,7 @@ footer{background:var(--dark);padding:56px 56px 40px;color:rgba(255,255,255,0.4)
 .faq-header .section-label{justify-content:center;}
 .faq-list{display:flex;flex-direction:column;gap:0;}
 .faq-item{border-bottom:1px solid var(--border);}
-.faq-q{width:100%;text-align:left;background:transparent;border:none;padding:26px 4px;font-family:'Stack Sans',sans-serif;font-size:17px;font-weight:200;color:var(--dark);cursor:none;display:flex;justify-content:space-between;align-items:center;gap:20px;transition:color 0.2s;}
+.faq-q{width:100%;text-align:left;background:transparent;border:none;padding:26px 4px;font-family:'Stack Sans',sans-serif;font-size:17px;font-weight:200;color:var(--dark);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:20px;transition:color 0.2s;}
 .faq-q:hover{color:var(--orange);}
 .faq-icon{flex-shrink:0;width:20px;height:20px;position:relative;transition:transform 0.3s;}
 .faq-icon::before,.faq-icon::after{content:'';position:absolute;background:var(--orange);border-radius:2px;top:50%;left:50%;transform:translate(-50%,-50%);}
@@ -511,8 +520,6 @@ footer{background:var(--dark);padding:56px 56px 40px;color:rgba(255,255,255,0.4)
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
-<div class="cursor-follower" id="follower"></div>
 
 <!-- NAVBAR -->
 <nav>
@@ -728,42 +735,9 @@ footer{background:var(--dark);padding:56px 56px 40px;color:rgba(255,255,255,0.4)
   <div class="stack-cards">
     <article class="stack-card">
       <div class="stack-card-inner">
-        <div class="stack-card-media"><img src="Portofolio/Social%20Media%20-%20Papancraft/Papancraft-2.jpg" alt="Social Media Management"></div>
+        <div class="stack-card-media"><img src="Portofolio/_web/pevita-1.jpg" decoding="async" alt="Branding & Identity"></div>
         <div class="stack-card-body">
           <span class="stack-card-num">01</span>
-          <h3 class="stack-card-title">Social Media Management</h3>
-          <p class="stack-card-desc">Strategy, content plan, ideation, design, and editing — handled monthly, so your brand shows up consistently and on-message.</p>
-          <a class="stack-card-link" href="https://wa.me/6282298764785" target="_blank">Explore service <span class="arw">↗</span></a>
-        </div>
-      </div>
-    </article>
-    <article class="stack-card">
-      <div class="stack-card-inner">
-        <div class="stack-card-media"><img src="Portofolio/Social%20Media%20-%20Papancraft/IMG_8928.jpg" alt="Content Production"></div>
-        <div class="stack-card-body">
-          <span class="stack-card-num">02</span>
-          <h3 class="stack-card-title">Content Production</h3>
-          <p class="stack-card-desc">Photoshoots, videography, and everything that needs a camera. We capture stories worth watching.</p>
-          <a class="stack-card-link" href="https://wa.me/6282298764785" target="_blank">Explore service <span class="arw">↗</span></a>
-        </div>
-      </div>
-    </article>
-    <article class="stack-card">
-      <div class="stack-card-inner">
-        <div class="stack-card-media"><img src="Portofolio/Event%20Branding%20-%20Degen%20Sundown%20Sesh%202.0/Card%402x.jpg" alt="Event Creative Design"></div>
-        <div class="stack-card-body">
-          <span class="stack-card-num">03</span>
-          <h3 class="stack-card-title">Event Creative Design</h3>
-          <p class="stack-card-desc">Social assets, print, collateral, and motion — everything your event needs to look unforgettable.</p>
-          <a class="stack-card-link" href="https://wa.me/6282298764785" target="_blank">Explore service <span class="arw">↗</span></a>
-        </div>
-      </div>
-    </article>
-    <article class="stack-card">
-      <div class="stack-card-inner">
-        <div class="stack-card-media"><img src="Portofolio/Personal%20Branding%20-%20Pevita%20Pearce/Card%20-%20pevita%402x.jpg" alt="Branding & Identity"></div>
-        <div class="stack-card-body">
-          <span class="stack-card-num">04</span>
           <h3 class="stack-card-title">Branding & Identity</h3>
           <p class="stack-card-desc">Logo, visual identity, brand guidelines — from scratch or rebrand. We build brands that mean something.</p>
           <a class="stack-card-link" href="https://wa.me/6282298764785" target="_blank">Explore service <span class="arw">↗</span></a>
@@ -772,7 +746,40 @@ footer{background:var(--dark);padding:56px 56px 40px;color:rgba(255,255,255,0.4)
     </article>
     <article class="stack-card">
       <div class="stack-card-inner">
-        <div class="stack-card-media"><img src="Portofolio/Social%20Media%20-%20Owais%20Skincare/Card%20-%20Owais%402x.jpg" alt="Creative Strategy"></div>
+        <div class="stack-card-media"><img src="Portofolio/_web/papancraft-3.jpg" decoding="async" alt="Social Media Management"></div>
+        <div class="stack-card-body">
+          <span class="stack-card-num">02</span>
+          <h3 class="stack-card-title">Social Media Management</h3>
+          <p class="stack-card-desc">Strategy, content plan, ideation, design, and editing — handled monthly, so your brand shows up consistently and on-message.</p>
+          <a class="stack-card-link" href="https://wa.me/6282298764785" target="_blank">Explore service <span class="arw">↗</span></a>
+        </div>
+      </div>
+    </article>
+    <article class="stack-card">
+      <div class="stack-card-inner">
+        <div class="stack-card-media"><img src="Portofolio/_web/papancraft-1.jpg" decoding="async" alt="Content Production"></div>
+        <div class="stack-card-body">
+          <span class="stack-card-num">03</span>
+          <h3 class="stack-card-title">Content Production</h3>
+          <p class="stack-card-desc">Photoshoots, videography, and everything that needs a camera. We capture stories worth watching.</p>
+          <a class="stack-card-link" href="https://wa.me/6282298764785" target="_blank">Explore service <span class="arw">↗</span></a>
+        </div>
+      </div>
+    </article>
+    <article class="stack-card">
+      <div class="stack-card-inner">
+        <div class="stack-card-media"><img src="Portofolio/_web/degen-2.jpg" decoding="async" alt="Event Creative Design"></div>
+        <div class="stack-card-body">
+          <span class="stack-card-num">04</span>
+          <h3 class="stack-card-title">Event Creative Design</h3>
+          <p class="stack-card-desc">Social assets, print, collateral, and motion — everything your event needs to look unforgettable.</p>
+          <a class="stack-card-link" href="https://wa.me/6282298764785" target="_blank">Explore service <span class="arw">↗</span></a>
+        </div>
+      </div>
+    </article>
+    <article class="stack-card">
+      <div class="stack-card-inner">
+        <div class="stack-card-media"><img src="Portofolio/_web/owais-1.jpg" decoding="async" alt="Creative Strategy"></div>
         <div class="stack-card-body">
           <span class="stack-card-num">05</span>
           <h3 class="stack-card-title">Creative Strategy</h3>
@@ -796,49 +803,49 @@ footer{background:var(--dark);padding:56px 56px 40px;color:rgba(255,255,255,0.4)
       </div>
       <figure class="wg-item wg-mid">
         <div class="wg-media" style="height:60vh;aspect-ratio:1620/2025;">
-          <img src="Portofolio/Content%20Design%20-%20Verde/Verde-1.jpg" alt="Content Design — Verde">
+          <img src="Portofolio/_web/verde-1.jpg" decoding="async" alt="Content Design — Verde">
         </div>
         <figcaption class="wg-cap"><span class="wg-num">01</span>Content Design — <strong>Verde</strong></figcaption>
       </figure>
       <figure class="wg-item wg-up">
         <div class="wg-media" style="height:38vh;aspect-ratio:2880/1620;">
-          <img src="Portofolio/Deck%20Design%20-%20KCMTKU/KCMTKU%206th%20YEARS%20ANNIVERSARY-1.jpg" alt="Deck Design — KCMTKU">
+          <img src="Portofolio/_web/kcmtku-1.jpg" decoding="async" alt="Deck Design — KCMTKU">
         </div>
         <figcaption class="wg-cap"><span class="wg-num">02</span>Deck Design — <strong>KCMTKU</strong></figcaption>
       </figure>
       <figure class="wg-item wg-down">
         <div class="wg-media" style="height:46vh;aspect-ratio:4364/3086;">
-          <img src="Portofolio/Event%20Branding%20-%20Degen%20Sundown%20Sesh%202.0/A4%20-%205%402x.jpg" alt="Event Branding — Degen Sundown Sesh 2.0">
+          <img src="Portofolio/_web/degen-1.jpg" decoding="async" alt="Event Branding — Degen Sundown Sesh 2.0">
         </div>
         <figcaption class="wg-cap"><span class="wg-num">03</span>Event Branding — <strong>Degen Sundown Sesh 2.0</strong></figcaption>
       </figure>
       <figure class="wg-item wg-up">
         <div class="wg-media" style="height:36vh;aspect-ratio:2880/1620;">
-          <img src="Portofolio/Personal%20Branding%20-%20Pevita%20Pearce/Frame-1.jpg" alt="Personal Branding — Pevita Pearce">
+          <img src="Portofolio/_web/pevita-2.jpg" decoding="async" alt="Personal Branding — Pevita Pearce">
         </div>
         <figcaption class="wg-cap"><span class="wg-num">04</span>Personal Branding — <strong>Pevita Pearce</strong></figcaption>
       </figure>
       <figure class="wg-item wg-mid">
         <div class="wg-media" style="height:58vh;aspect-ratio:2160/2700;">
-          <img src="Portofolio/Social%20Media%20-%20Owais%20Skincare/Owais%20Content-1.jpg" alt="Social Media — Owais Skincare">
+          <img src="Portofolio/_web/owais-2.jpg" decoding="async" alt="Social Media — Owais Skincare">
         </div>
         <figcaption class="wg-cap"><span class="wg-num">05</span>Social Media — <strong>Owais Skincare</strong></figcaption>
       </figure>
       <figure class="wg-item wg-down">
         <div class="wg-media" style="height:34vh;aspect-ratio:1920/1080;">
-          <img src="Portofolio/Youtube%20Thumbnail%20-%20Theresa%20Learn/100k%20di%20jakarta_.jpg" alt="Youtube Thumbnail — Theresa Learn">
+          <img src="Portofolio/_web/theresa-1.jpg" decoding="async" alt="Youtube Thumbnail — Theresa Learn">
         </div>
         <figcaption class="wg-cap"><span class="wg-num">06</span>Youtube Thumbnail — <strong>Theresa Learn</strong></figcaption>
       </figure>
       <figure class="wg-item wg-mid">
         <div class="wg-media" style="height:56vh;aspect-ratio:2160/2700;">
-          <img src="Portofolio/Social%20Media%20-%20Papancraft/Papancraft-1.jpg" alt="Social Media — Papancraft">
+          <img src="Portofolio/_web/papancraft-2.jpg" decoding="async" alt="Social Media — Papancraft">
         </div>
         <figcaption class="wg-cap"><span class="wg-num">07</span>Social Media — <strong>Papancraft</strong></figcaption>
       </figure>
       <div class="wg-end">
         <p class="wg-end-title">More where<br>that <span class="hi">came from.</span></p>
-        <a href="https://wa.me/6282298764785" target="_blank" class="wg-end-link">See all projects <span>→</span></a>
+        <a href="projects.html" class="wg-end-link js-to-projects">See all projects <span>→</span></a>
       </div>
     </div>
   </div>
@@ -1126,22 +1133,12 @@ footer{background:var(--dark);padding:56px 56px 40px;color:rgba(255,255,255,0.4)
   </div>
 </footer>
 
+<div class="page-curtain" aria-hidden="true"><div class="pc-orange"></div><div class="pc-dark"></div></div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
 <script>
-const cursor = document.getElementById('cursor');
-const follower = document.getElementById('follower');
-let mx=0,my=0,fx=0,fy=0;
-document.addEventListener('mousemove',e=>{
-  mx=e.clientX;my=e.clientY;
-  cursor.style.left=(mx-6)+'px';cursor.style.top=(my-6)+'px';
-});
-function animFollower(){
-  fx+=(mx-fx-20)*0.12;fy+=(my-fy-20)*0.12;
-  follower.style.left=fx+'px';follower.style.top=fy+'px';
-  requestAnimationFrame(animFollower);
-}
-animFollower();
 
 /* ── Hero dither glow follows the cursor ── */
 const heroGlow=document.getElementById('heroGlow');
@@ -1211,6 +1208,54 @@ reveals.forEach(r=>obs.observe(r));
 if(window.gsap && window.ScrollTrigger){
   gsap.registerPlugin(ScrollTrigger);
 
+  /* ── Smooth scroll (Lenis) ── */
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(window.Lenis && !reduceMotion){
+    const lenis = new Lenis({ lerp: 0.085, wheelMultiplier: 0.9, smoothWheel: true });
+    window.lenis = lenis;
+    lenis.on('scroll', ScrollTrigger.update);
+    // Pins add height after Lenis measures the page; re-measure or wheel scrolling stops short
+    ScrollTrigger.addEventListener('refresh', () => lenis.resize());
+    gsap.ticker.add(t => lenis.raf(t * 1000));
+    gsap.ticker.lagSmoothing(0);
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', e=>{
+        const id = a.getAttribute('href');
+        const el = id.length > 1 && document.querySelector(id);
+        if(!el) return;
+        e.preventDefault();
+        lenis.scrollTo(el, { duration: 1.4 });
+      });
+    });
+  }
+
+  /* ── Page transition to projects.html ── */
+  const curtain = document.querySelectorAll('.page-curtain div');
+  const fromCurtain = document.documentElement.classList.contains('from-curtain');
+  try{ sessionStorage.removeItem('capyCurtain'); }catch(e){}
+  gsap.set(curtain, { y: 0, yPercent: fromCurtain ? 0 : 100 });
+  document.documentElement.classList.remove('from-curtain');
+  requestAnimationFrame(()=>{   // runs after every pin below is set up
+    // index.html#portfolio from the projects page: land on the section once the pins are measured
+    const el = location.hash.length > 1 && document.querySelector(location.hash);
+    if(el){ ScrollTrigger.refresh(); window.lenis ? window.lenis.scrollTo(el, { immediate: true, force: true }) : el.scrollIntoView(); }
+    if(fromCurtain) gsap.to([...curtain].reverse(), { yPercent: -100, duration: 0.9, ease: 'power4.inOut', stagger: 0.1, delay: 0.1,
+      onComplete: () => gsap.set(curtain, { yPercent: 100 }) });
+  });
+  document.querySelectorAll('.js-to-projects').forEach(a=>{
+    a.addEventListener('click', e=>{
+      e.preventDefault();
+      try{ sessionStorage.setItem('capyCurtain', '1'); }catch(err){}
+      window.lenis && window.lenis.stop();
+      gsap.to(curtain, { yPercent: 0, duration: 0.8, ease: 'power4.inOut', stagger: 0.12,
+        onComplete: () => { location.href = a.getAttribute('href'); } });
+    });
+  });
+  // Back button restores this page from cache with the curtain still up
+  window.addEventListener('pageshow', e=>{
+    if(e.persisted){ gsap.set(curtain, { yPercent: 100 }); window.lenis && window.lenis.start(); }
+  });
+
   /* ── Vision & Mission: pinned reveal sequence ── */
   const vStage = document.querySelector('.vision');
   if(vStage){
@@ -1264,11 +1309,11 @@ if(window.gsap && window.ScrollTrigger){
   if(hStage && hTrack){
     const hTween = gsap.to(hTrack, {
       x: () => -(hTrack.scrollWidth - window.innerWidth),
-      ease: 'none',
+      ease: 'none', force3D: true,
       scrollTrigger: {
         trigger: hStage, start: 'top top',
         end: () => '+=' + (hTrack.scrollWidth - window.innerWidth),
-        pin: true, scrub: 0.6, invalidateOnRefresh: true
+        pin: true, scrub: 1, anticipatePin: 1, invalidateOnRefresh: true
       }
     });
     gsap.utils.toArray('.wg-media img').forEach(img=>{
@@ -1278,8 +1323,8 @@ if(window.gsap && window.ScrollTrigger){
       });
     });
     gsap.utils.toArray('.wg-item').forEach(item=>{
-      gsap.from(item, { yPercent: 6, autoAlpha: 0, duration: 0.6, ease: 'power2.out',
-        scrollTrigger: { trigger: item, containerAnimation: hTween, start: 'left 95%', toggleActions: 'play none none reverse' } });
+      gsap.from(item, { yPercent: 8, autoAlpha: 0, duration: 1.1, ease: 'expo.out',
+        scrollTrigger: { trigger: item, containerAnimation: hTween, start: 'left 92%', toggleActions: 'play none none reverse' } });
     });
   }
 

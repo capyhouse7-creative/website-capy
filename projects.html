@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects — Capybara Creative House</title>
+<script>
+/* Arriving from the home page's curtain: keep the screen covered until GSAP lifts it */
+try{if(sessionStorage.getItem('capyCurtain')){document.documentElement.classList.add('from-curtain');setTimeout(function(){document.documentElement.classList.remove('from-curtain');},3000);}}catch(e){}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:'Stack Sans';src:url('Font/StackSans/StackSansText-VariableFont_wght.ttf') format('truetype-variations');font-weight:100 900;font-display:swap;}
+</style>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --orange:#E8621A;
+  --orange-light:#FF7A32;
+  --ink:#0B0B0B;
+  --line:rgba(255,255,255,0.1);
+  --row-h:clamp(52px,6.6vh,66px);
+}
+html,body{overflow-x:clip;}
+body{font-family:'Stack Sans',sans-serif;font-weight:200;background:var(--ink);color:#fff;-webkit-font-smoothing:antialiased;}
+
+/* ── Header ── */
+.pj-top{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:22px clamp(20px,3vw,48px);pointer-events:none;}
+.pj-top>*{pointer-events:auto;}
+.pj-logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-size:15px;color:#fff;}
+.pj-logo img{width:30px;height:30px;object-fit:contain;}
+.pj-logo span{color:var(--orange);}
+.pj-actions{display:flex;gap:8px;align-items:center;}
+.pj-back{font-size:13px;color:rgba(255,255,255,0.62);text-decoration:none;padding:10px 16px;border-radius:100px;border:1px solid var(--line);background:rgba(11,11,11,0.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:color 0.2s,border-color 0.2s;}
+.pj-back:hover{color:#fff;border-color:rgba(255,255,255,0.35);}
+.pj-cta{font-size:13px;color:#fff;text-decoration:none;padding:10px 18px;border-radius:100px;background:var(--orange);transition:background 0.2s;}
+.pj-cta:hover{background:var(--orange-light);}
+
+/* ── Brush stroke (top-left accent) ── */
+.pj-stroke{position:absolute;top:0;left:0;width:clamp(160px,16vw,320px);height:auto;z-index:0;pointer-events:none;overflow:visible;}
+.pj-stroke path{fill:none;stroke:var(--orange);stroke-width:112;stroke-linecap:round;}
+
+/* ── Count + rail ── */
+.pj-count{position:fixed;left:clamp(16px,2.2vw,44px);top:50%;transform:translateY(-50%);font-size:15px;color:rgba(255,255,255,0.7);z-index:5;font-variant-numeric:tabular-nums;}
+.pj-rail{position:fixed;right:clamp(18px,2.4vw,46px);top:22vh;bottom:22vh;width:1px;background:rgba(255,255,255,0.14);z-index:5;}
+.pj-rail-label{position:absolute;right:0;top:0;padding-right:20px;font-size:15px;white-space:nowrap;transform:translateY(-50%);}
+.pj-rail-label::after{content:'';position:absolute;right:-1px;top:50%;width:3px;height:24px;background:#fff;transform:translateY(-50%);}
+
+/* ── Layout: categories left, preview right ── */
+.pj-main{position:relative;z-index:2;min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6vw;padding:110px clamp(110px,9vw,200px) 80px clamp(72px,12.4vw,260px);}
+
+/* ── Category list ── */
+.pj-list{list-style:none;width:min(36vw,520px);}
+.pj-row{border-top:1px solid var(--line);}
+.pj-row:last-child{border-bottom:1px solid var(--line);}
+.pj-btn{all:unset;box-sizing:border-box;width:100%;height:var(--row-h);display:grid;grid-template-columns:44px 1fr auto;align-items:center;cursor:pointer;}
+.pj-num{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.12em;color:rgba(255,255,255,0.3);transition:color 0.35s;}
+.pj-name{font-size:clamp(19px,1.7vw,26px);letter-spacing:-0.01em;line-height:1;color:rgba(255,255,255,0.42);transform-origin:left center;white-space:nowrap;transition:color 0.35s,opacity 0.35s;}
+.pj-meta-r{display:flex;align-items:center;gap:10px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.1em;color:rgba(255,255,255,0.28);transition:color 0.35s;}
+.pj-arrow{display:inline-block;color:var(--orange);opacity:0;transform:translateX(-8px);transition:opacity 0.35s,transform 0.35s;}
+/* active = the category in the preview; hover = the one under the cursor (pops out) */
+.pj-row.is-active .pj-name{color:#fff;}
+.pj-row.is-active .pj-num{color:var(--orange);}
+.pj-list.is-hovering .pj-row:not(.is-hover) .pj-name{opacity:0.45;}
+.pj-row.is-hover .pj-name{color:#fff;}
+.pj-row.is-hover .pj-num{color:var(--orange);}
+.pj-row.is-hover .pj-meta-r{color:rgba(255,255,255,0.7);}
+.pj-row.is-hover .pj-arrow{opacity:1;transform:none;}
+.pj-btn:focus-visible .pj-name{outline:1px solid var(--orange);outline-offset:6px;}
+
+/* ── Preview ── */
+.pj-preview{justify-self:end;order:2;}   /* first in the markup so it sits on top on phones */
+.pj-meta,.pj-foot{display:flex;justify-content:space-between;align-items:center;gap:24px;font-family:'DM Mono',monospace;font-size:11.5px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.5);}
+.pj-meta{margin-bottom:14px;}
+.pj-meta b{font-weight:400;color:rgba(255,255,255,0.85);}
+.pj-frame{position:relative;overflow:hidden;background:#151515;cursor:pointer;}
+.pj-frame>img,.pj-frame>.pj-empty{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;will-change:transform,clip-path;}
+.pj-empty{display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:linear-gradient(150deg,#1b1b1b,#111);text-align:center;padding:24px;}
+.pj-empty strong{font-weight:200;font-size:20px;color:#fff;}
+.pj-empty span{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.4);}
+.pj-foot{margin-top:14px;}
+.pj-cap{font-family:'Stack Sans',sans-serif;font-size:13px;letter-spacing:0;text-transform:none;color:rgba(255,255,255,0.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pj-cap em{font-style:normal;color:rgba(255,255,255,0.4);}
+.pj-dots{display:flex;gap:6px;flex-shrink:0;}
+.pj-dots i{display:block;width:22px;height:2px;background:rgba(255,255,255,0.18);position:relative;overflow:hidden;}
+.pj-dots i::after{content:'';position:absolute;inset:0;background:var(--orange);transform:scaleX(var(--p,0));transform-origin:left;}
+.pj-ask{display:inline-block;margin-top:18px;font-size:12.5px;color:rgba(255,255,255,0.5);text-decoration:none;transition:color 0.2s;}
+.pj-ask:hover{color:var(--orange);}
+
+/* ── Page curtain (shared with index.html) ── */
+.page-curtain{position:fixed;inset:0;z-index:9999;pointer-events:none;}
+.page-curtain div{position:absolute;inset:0;transform:translateY(100%);}
+.page-curtain .pc-orange{background:var(--orange);}
+.page-curtain .pc-dark{background:var(--ink);}
+.from-curtain .page-curtain div{transform:none;}
+
+@media (max-width:820px){
+  .pj-count,.pj-rail{display:none;}
+  .pj-stroke{width:150px;}
+  .pj-top{padding:16px 20px;}
+  .pj-back,.pj-cta{padding:8px 12px;font-size:12px;}
+  .pj-main{display:block;min-height:0;padding:72px 20px 60px;}
+  .pj-preview{position:sticky;top:64px;z-index:3;padding:10px 0 18px;}
+  .pj-preview::before{content:'';position:absolute;left:-20px;right:-20px;top:-64px;bottom:-30px;z-index:-1;background:linear-gradient(var(--ink) calc(100% - 30px),rgba(11,11,11,0));}
+  .pj-frame{margin:0 auto;}
+  .pj-ask{display:none;}
+  .pj-list{width:100%;margin-top:22px;}
+  .pj-btn{grid-template-columns:34px 1fr auto;column-gap:12px;}
+  .pj-name{font-size:18px;}
+}
+</style>
+</head>
+<body>
+
+<header class="pj-top">
+  <a href="index.html" class="pj-logo js-to-home"><img src="logo.png" alt="Capyhouse logo"><div><span>Capy</span>house</div></a>
+  <div class="pj-actions">
+    <a href="index.html#portfolio" class="pj-back js-to-home">← Back</a>
+    <a href="https://wa.me/6282298764785" target="_blank" class="pj-cta">Start a Project</a>
+  </div>
+</header>
+
+<svg class="pj-stroke" viewBox="0 0 470 360" aria-hidden="true"><path d="M-80 120 C 110 130, 280 190, 385 268"/></svg>
+
+<div class="pj-count" aria-hidden="true">(00)</div>
+
+<main class="pj-main">
+  <h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Projects by Capybara Creative House</h1>
+  <aside class="pj-preview" aria-live="polite">
+    <div class="pj-meta"><span><b class="pj-idx">01</b> <span class="pj-catname"></span></span><span>Preview</span></div>
+    <div class="pj-frame" title="Next work"></div>
+    <div class="pj-foot"><span class="pj-cap"></span><div class="pj-dots"></div></div>
+    <a class="pj-ask" href="https://wa.me/6282298764785" target="_blank">Start a similar project ↗</a>
+  </aside>
+  <ol class="pj-list" id="pjList"></ol>
+</main>
+
+<div class="pj-rail" aria-hidden="true"><div class="pj-rail-label">Projects</div></div>
+
+<div class="page-curtain" aria-hidden="true"><div class="pc-orange"></div><div class="pc-dark"></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+/* Categories shown on this page. works: [file in Portofolio/_web, width/height ratio, client, label] */
+const CATEGORIES = [
+  { name: 'Branding', works: [
+    ['pevita-2', 1.778, 'Pevita Pearce', 'Personal Branding'],
+    ['pevita-1', 1.341, 'Pevita Pearce', 'Personal Branding'],
+    ['pevita-4', 1.778, 'Pevita Pearce', 'Personal Branding'],
+    ['degen-3',  2.803, 'Degen Sundown Sesh 2.0', 'Event Logo'] ] },
+  { name: 'Social Media Management', works: [
+    ['papancraft-2', 0.8, 'Papancraft', 'Social Media'],
+    ['papancraft-3', 0.8, 'Papancraft', 'Social Media'],
+    ['papancraft-4', 0.8, 'Papancraft', 'Social Media'],
+    ['owais-1', 1.341, 'Owais Skincare', 'Social Media'] ] },
+  { name: 'Instagram Design', works: [
+    ['verde-1', 0.8, 'Verde', 'Content Design'],
+    ['verde-2', 0.8, 'Verde', 'Content Design'],
+    ['owais-2', 0.8, 'Owais Skincare', 'Instagram Content'],
+    ['owais-3', 0.8, 'Owais Skincare', 'Instagram Content'] ] },
+  { name: 'Pitch Deck', works: [
+    ['kcmtku-1', 1.778, 'KCMTKU', '6th Anniversary Deck'],
+    ['kcmtku-2', 1.778, 'KCMTKU', '6th Anniversary Deck'],
+    ['kcmtku-3', 1.778, 'KCMTKU', '6th Anniversary Deck'] ] },
+  { name: 'YouTube Design', works: [
+    ['theresa-1', 1.778, 'Theresa Learn', 'YouTube Thumbnail'],
+    ['theresa-2', 1.778, 'Theresa Learn', 'YouTube Thumbnail'],
+    ['theresa-3', 1.778, 'Theresa Learn', 'YouTube Thumbnail'] ] },
+  { name: 'Photography', works: [
+    ['papancraft-1', 0.8, 'Papancraft', 'Photography'] ] },
+  { name: 'Jersey Design', works: [] },
+  { name: 'Etc.', works: [
+    ['degen-1', 1.414, 'Degen Sundown Sesh 2.0', 'Event Branding'],
+    ['degen-2', 1.341, 'Degen Sundown Sesh 2.0', 'Event Branding'] ] },
+];
+const IMG = f => 'Portofolio/_web/' + f + '.jpg';
+const EMPTY_RATIO = 4 / 3;
+const pad = n => String(n).padStart(2, '0');
+
+const list = document.getElementById('pjList');
+list.innerHTML = CATEGORIES.map((c, i) =>
+  `<li class="pj-row"><button class="pj-btn" data-i="${i}">` +
+  `<span class="pj-num">${pad(i + 1)}</span><span class="pj-name">${c.name}</span>` +
+  `<span class="pj-meta-r">${c.works.length ? '(' + pad(c.works.length) + ')' : 'Soon'}<span class="pj-arrow">→</span></span>` +
+  `</button></li>`
+).join('');
+const rows = [...list.children];
+const names = rows.map(r => r.querySelector('.pj-name'));
+const frame = document.querySelector('.pj-frame');
+const dotsEl = document.querySelector('.pj-dots');
+const capEl = document.querySelector('.pj-cap');
+document.querySelector('.pj-count').textContent = '(' + pad(CATEGORIES.length) + ')';
+
+const mobile = () => window.innerWidth <= 820;
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ── Preview frame: sized to each work's ratio, works swap with a clip reveal ── */
+function frameSize(r){
+  const maxW = mobile() ? window.innerWidth - 40 : Math.min(window.innerWidth * 0.36, 680);
+  const maxH = mobile() ? window.innerHeight * 0.32 : window.innerHeight * 0.62;
+  const w = Math.min(maxW, maxH * r);
+  return { width: w, height: w / r };
+}
+function slide(c, k){
+  const work = CATEGORIES[c].works[k];
+  if(!work){
+    const el = document.createElement('div');
+    el.className = 'pj-empty';
+    el.innerHTML = `<strong>${CATEGORIES[c].name}</strong><span>Work coming soon</span>`;
+    return { el, ratio: EMPTY_RATIO, ready: Promise.resolve() };
+  }
+  const img = new Image();
+  img.src = IMG(work[0]);
+  img.alt = work[2] + ' — ' + work[3];
+  return { el: img, ratio: work[1], ready: img.decode ? img.decode() : Promise.resolve() };
+}
+let swapId = 0;
+function show(c, k, dir, instant){
+  const id = ++swapId;
+  const { el, ratio, ready } = slide(c, k);
+  const size = frameSize(ratio);
+  const go = () => {
+    if(id !== swapId) return;                       // a newer swap won
+    const old = [...frame.children];
+    frame.appendChild(el);
+    if(instant || reduceMotion){ gsap.set(frame, size); old.forEach(o => o.remove()); return; }
+    gsap.to(frame, { ...size, duration: 0.9, ease: 'expo.inOut', overwrite: 'auto' });
+    gsap.fromTo(el,
+      { clipPath: dir > 0 ? 'inset(100% 0% 0% 0%)' : 'inset(0% 0% 100% 0%)', scale: 1.15 },
+      { clipPath: 'inset(0% 0% 0% 0%)', scale: 1, duration: 0.9, ease: 'expo.inOut',
+        onComplete: () => old.forEach(o => o.parentNode && o.remove()) });
+    old.forEach(o => gsap.to(o, { scale: 1.05, yPercent: -6 * dir, duration: 0.9, ease: 'expo.inOut' }));
+  };
+  ready.then(go, go);
+  const work = CATEGORIES[c].works[k];
+  capEl.innerHTML = work ? `${work[2]} <em>— ${work[3]}</em>` : 'Ask us about this one';
+}
+
+/* ── Active category + auto-cycling through its works ── */
+let active = -1, shot = 0, cycle = null;
+function setDots(n, k){
+  dotsEl.innerHTML = '<i></i>'.repeat(n);
+  [...dotsEl.children].forEach((d, j) => d.style.setProperty('--p', j < k ? 1 : 0));
+}
+function runCycle(){
+  cycle && cycle.kill();
+  const n = CATEGORIES[active].works.length;
+  const dot = dotsEl.children[shot];
+  if(n < 2 || reduceMotion){ dot && dot.style.setProperty('--p', 1); return; }
+  cycle = gsap.fromTo(dot, { '--p': 0 }, { '--p': 1, duration: 3.2, ease: 'none', onComplete: nextShot });
+}
+function nextShot(){
+  const n = CATEGORIES[active].works.length;
+  if(n < 2) return;
+  shot = (shot + 1) % n;
+  setDots(n, shot);
+  show(active, shot, 1);
+  runCycle();
+}
+const railLabel = document.querySelector('.pj-rail-label');
+const rail = document.querySelector('.pj-rail');
+function setActive(i, instant){
+  if(i === active) return;
+  const dir = i > active ? 1 : -1;
+  active = i; shot = 0;
+  rows.forEach((r, j) => r.classList.toggle('is-active', j === i));
+  document.querySelector('.pj-idx').textContent = pad(i + 1);
+  document.querySelector('.pj-catname').textContent = '/ ' + CATEGORIES[i].name;
+  setDots(CATEGORIES[i].works.length, 0);
+  show(i, 0, dir, instant);
+  runCycle();
+  gsap.to(railLabel, { top: (i / (CATEGORIES.length - 1)) * rail.offsetHeight, duration: instant ? 0 : 0.8, ease: 'expo.out' });
+  [i - 1, i + 1].forEach(j => { const w = CATEGORIES[j] && CATEGORIES[j].works[0]; if(w) new Image().src = IMG(w[0]); });  // warm neighbours
+}
+frame.addEventListener('click', nextShot);
+
+/* ── Hover pops the row out; hovering also picks the category ── */
+function pop(i, on){
+  rows[i].classList.toggle('is-hover', on);
+  gsap.to(names[i], { x: on ? 12 : 0, scale: on ? 1.14 : 1, duration: 0.6, ease: 'expo.out', overwrite: 'auto' });
+}
+rows.forEach((r, i) => {
+  const b = r.querySelector('.pj-btn');
+  b.addEventListener('mouseenter', () => { list.classList.add('is-hovering'); pop(i, true); setActive(i); });
+  b.addEventListener('mouseleave', () => pop(i, false));
+  b.addEventListener('focus', () => setActive(i));
+  b.addEventListener('click', () => {
+    setActive(i);
+    if(mobile()) window.scrollTo({ top: 0, behavior: 'smooth' });   // bring the sticky preview into full view
+  });
+});
+list.addEventListener('mouseleave', () => list.classList.remove('is-hovering'));
+window.addEventListener('keydown', e => {
+  if(e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+  e.preventDefault();
+  const i = gsap.utils.clamp(0, rows.length - 1, active + (e.key === 'ArrowDown' ? 1 : -1));
+  rows[i].querySelector('.pj-btn').focus();
+});
+window.addEventListener('resize', () => {
+  if(active < 0) return;
+  const w = CATEGORIES[active].works[shot];
+  gsap.set(frame, frameSize(w ? w[1] : EMPTY_RATIO));
+  gsap.set(railLabel, { top: (active / (CATEGORIES.length - 1)) * rail.offsetHeight });
+});
+
+setActive(0, true);
+
+/* ── Intro + page transitions ── */
+const curtain = document.querySelectorAll('.page-curtain div');
+const fromCurtain = document.documentElement.classList.contains('from-curtain');
+try{ sessionStorage.removeItem('capyCurtain'); }catch(e){}
+gsap.set(curtain, { y: 0, yPercent: fromCurtain ? 0 : 100 });
+document.documentElement.classList.remove('from-curtain');
+
+const strokePath = document.querySelector('.pj-stroke path');
+const strokeLen = strokePath.getTotalLength() + 20;
+const intro = gsap.timeline({ defaults: { ease: 'expo.out' } });
+if(fromCurtain){
+  intro.to([...curtain].reverse(), { yPercent: -100, duration: 0.9, ease: 'power4.inOut', stagger: 0.1 })
+       .set(curtain, { yPercent: 100 });
+}
+intro.fromTo(strokePath, { strokeDasharray: strokeLen, strokeDashoffset: strokeLen }, { strokeDashoffset: 0, duration: 1.4 }, fromCurtain ? '-=0.55' : 0.1)
+     .from('.pj-btn', { y: 28, opacity: 0, duration: 1.1, stagger: 0.06 }, '<0.05')
+     .from(frame, { clipPath: 'inset(100% 0% 0% 0%)', duration: 1.2, ease: 'expo.inOut' }, '<')
+     .from('.pj-meta, .pj-foot, .pj-ask, .pj-top, .pj-count, .pj-rail', { opacity: 0, duration: 0.8, ease: 'power2.out' }, '<0.4');
+
+/* Back to the home page: curtain up, then go */
+document.querySelectorAll('.js-to-home').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    try{ sessionStorage.setItem('capyCurtain', '1'); }catch(err){}
+    gsap.to(curtain, { yPercent: 0, duration: 0.8, ease: 'power4.inOut', stagger: 0.12,
+      onComplete: () => { location.href = a.getAttribute('href'); } });
+  });
+});
+window.addEventListener('pageshow', e => {
+  if(e.persisted) gsap.set(curtain, { yPercent: 100 });
+});
+</script>
+</body>
+</html>
