@@ -69,32 +69,44 @@ nav.nav-scrolled{height:46px;background:rgba(38,38,38,0.82);backdrop-filter:blur
 .nav-btn-cta svg{width:17px;height:17px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 
 /* ── Hero: centered layout ── */
-.hero{min-height:100vh;padding:148px 0 42px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;position:relative;overflow:hidden;background:#F4F3EF;border:14px solid #fff;border-radius:28px;}
-/* Hero showcase cards — infinite loop right→left */
-.hero-cards{position:relative;z-index:1;width:100%;margin-top:clamp(40px,7vh,84px);overflow:hidden;}
-.hero-cards-track{display:flex;gap:10px;width:max-content;animation:heroCardsLoop 36s linear infinite;}
-.hero-showcase-card{width:clamp(220px,24vw,320px);aspect-ratio:4/3;border-radius:0;flex-shrink:0;position:relative;overflow:hidden;border:1px solid rgba(22,22,22,0.08);display:flex;align-items:center;justify-content:center;}
-.hero-showcase-card span{font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(22,22,22,0.3);}
-.hcard-1{background:linear-gradient(135deg,#F7E9DC,#EAD3BC);}
-.hcard-2{background:linear-gradient(135deg,#1d1d1d,#3a3a3a);}
-.hcard-2 span,.hcard-4 span,.hcard-6 span,.hcard-8 span{color:rgba(255,255,255,0.35);}
-.hcard-3{background:linear-gradient(135deg,#FBE3D2,#F0C7A6);}
-.hcard-4{background:linear-gradient(135deg,#E8621A,#C8460A);}
-.hcard-5{background:linear-gradient(135deg,#EFE7DA,#D9C9B0);}
-.hcard-6{background:linear-gradient(135deg,#232323,#101010);}
-.hcard-7{background:linear-gradient(135deg,#F6E6D6,#E8CBAD);}
-.hcard-8{background:linear-gradient(135deg,#D96A24,#A83E06);}
-@keyframes heroCardsLoop{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
-.hero::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(rgba(22,22,22,0.12) 1px,transparent 1.5px);background-size:5px 5px;animation:ditherDrift 7s linear infinite;}
-.hero-glow{position:absolute;left:50%;top:45%;width:560px;height:560px;transform:translate(-50%,-50%);pointer-events:none;z-index:0;opacity:0;transition:opacity 0.5s ease;background:radial-gradient(circle at center,rgba(232,98,26,0.95) 0%,rgba(232,98,26,0.4) 34%,transparent 66%);-webkit-mask-image:radial-gradient(#000 1px,transparent 1.5px);mask-image:radial-gradient(#000 1px,transparent 1.5px);-webkit-mask-size:5px 5px;mask-size:5px 5px;}
+.hero{min-height:100vh;padding:118px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;position:relative;overflow:hidden;background:#F0F0EE;border:14px solid #fff;border-radius:28px;}
+/* Hero orbit — work cards standing on the rim of a slowly swaying wheel */
+.hero-orbit{position:relative;z-index:1;width:100%;flex:1;min-height:clamp(340px,58vh,640px);margin-top:clamp(18px,3vh,36px);overflow:hidden;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none;}
+.hero-orbit.is-dragging{cursor:grabbing;}
+.orbit-card{position:absolute;display:block;border-radius:14px;overflow:hidden;transform-origin:50% 100%;background:#ddd;box-shadow:0 22px 50px rgba(22,22,22,0.18),0 2px 6px rgba(22,22,22,0.08);will-change:transform;text-decoration:none;-webkit-tap-highlight-color:transparent;}
+.orbit-card img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;}
+.orbit-card-tag{position:absolute;top:12px;left:12px;font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:#fff;background:rgba(22,22,22,0.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:6px 9px;border-radius:100px;opacity:0;transform:translateY(-4px);transition:opacity 0.3s,transform 0.3s;white-space:nowrap;}
+.orbit-card:hover .orbit-card-tag,.orbit-card:focus-visible .orbit-card-tag{opacity:1;transform:none;}
+.orbit-card:focus-visible{outline:2px solid var(--orange);outline-offset:4px;}
+.orbit-disc{position:absolute;border-radius:50%;z-index:5000;pointer-events:none;overflow:hidden;background:linear-gradient(180deg,#E3E3E0 0%,#D9D9D5 14%,#CFCFCA 34%);box-shadow:0 -18px 46px rgba(22,22,22,0.13),inset 0 2px 0 rgba(255,255,255,0.7);}
+.orbit-labels{position:absolute;left:0;right:0;bottom:20px;z-index:5001;display:flex;justify-content:space-between;padding:0 clamp(20px,3vw,40px);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(22,22,22,0.42);pointer-events:none;}
+@media (max-width:600px){
+  .hero{min-height:0;}
+  .hero-orbit{flex:none;min-height:0;height:min(96vw,460px);}
+  .orbit-labels{bottom:14px;}
+  .orbit-labels span:nth-child(2),.orbit-labels span:nth-child(3){display:none;}
+}
+/* Narrow screens: nothing may be wider than the phone (nav, pricing grid, footer) */
+@media (max-width:640px){
+  .nav-links,.nav-divider{display:none;}
+  nav{padding:0 7px 0 14px;}
+  .nav-actions{margin-left:14px;}
+  #pricing{padding:80px 20px!important;}
+  #pricing .pricing-grid{grid-template-columns:1fr!important;}
+  #pricing .pricing-card-dark{grid-column:auto!important;}
+  #pricing .pricing-grid+div{flex-direction:column;align-items:flex-start!important;gap:18px;}
+  footer{padding:48px 20px 32px;}
+  .footer-top{flex-direction:column;gap:28px;}
+  .footer-links{flex-wrap:wrap;gap:14px 22px;}
+  .footer-bottom{flex-direction:column;align-items:flex-start;gap:14px;}
+}
 .hero-statement{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;}
 .hero-headline .hl-orange{color:var(--orange);}
-@keyframes ditherDrift{0%{background-position:0 0;}100%{background-position:0 -5px;}}
 /* Hero intro — body copy, CTA & capybara moved below */
 .hero-intro{background:#fff;padding:76px 56px 0;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;overflow:hidden;}
-.hero-eyebrow{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-family:'Stack Sans',sans-serif;font-size:12px;font-weight:200;letter-spacing:0.16em;text-transform:uppercase;color:var(--orange);margin-bottom:30px;}
-.hero-headline{font-family:'Stack Sans',sans-serif;font-size:clamp(28px,7.2vw,112px);font-weight:200;line-height:0.98;letter-spacing:-0.03em;color:var(--dark);max-width:none;margin-bottom:0;}
-@media (max-width:600px){.hero{padding:100px 20px 48px;}}
+.hero-eyebrow{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-family:'Stack Sans',sans-serif;font-size:12px;font-weight:200;letter-spacing:0.16em;text-transform:uppercase;color:var(--orange);margin-bottom:18px;}
+.hero-headline{font-family:'Stack Sans',sans-serif;font-size:clamp(30px,4.6vw,72px);font-weight:200;line-height:1.02;letter-spacing:-0.03em;color:var(--dark);max-width:none;margin-bottom:0;}
+@media (max-width:600px){.hero{padding:96px 0 0;}.hero-statement{padding:0 20px;}}
 .hero-headline .hi{color:var(--orange);}
 .hero-sub{font-size:16px;line-height:1.75;color:#666;max-width:none;font-weight:200;margin-bottom:28px;}
 .hero-sub strong{color:var(--dark);font-weight:200;}
@@ -283,6 +295,14 @@ section{padding:112px 56px;}
 .wmedia-5{background:linear-gradient(140deg,#2a2016,#161210);}
 .wmedia-6{background:linear-gradient(140deg,#26221e,#131110);}
 /* ── Selected works gallery (staggered, natural aspect ratios) ── */
+@media (max-width:768px){   /* phones: a vertical stack instead of the pinned sideways scroll */
+  .hscroll-stage{height:auto;padding:88px 20px 80px;}
+  .hscroll-track{flex-direction:column;align-items:stretch;width:auto;height:auto;gap:56px;padding:0;}
+  .hscroll-track .hscroll-intro{width:auto;}
+  .hscroll-track .wg-media{height:auto!important;width:100%;}
+  .hscroll-track .wg-up,.hscroll-track .wg-down{transform:none;}   /* scoped: these rules come before the desktop offsets */
+  .hscroll-track .wg-end{padding-right:0;}
+}
 .wg-item{flex-shrink:0;margin:0;display:flex;flex-direction:column;gap:14px;}
 .wg-media{overflow:hidden;background:#1a1c1d;}
 .wg-media img{width:100%;height:100%;object-fit:cover;display:block;will-change:transform;transform:scale(1.12);}
@@ -548,30 +568,13 @@ footer{background:var(--dark);padding:56px 56px 40px;color:rgba(255,255,255,0.4)
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-glow" id="heroGlow" aria-hidden="true"></div>
   <div class="hero-statement">
     <div class="hero-eyebrow">Capybara Creative House</div>
     <h1 class="hero-headline">Effortlessly Creative.<br><span class="hl-orange">Seriously Effective.</span></h1>
   </div>
-  <div class="hero-cards" aria-hidden="true">
-    <div class="hero-cards-track">
-      <div class="hero-showcase-card hcard-1"><span>Work 01</span></div>
-      <div class="hero-showcase-card hcard-2"><span>Work 02</span></div>
-      <div class="hero-showcase-card hcard-3"><span>Work 03</span></div>
-      <div class="hero-showcase-card hcard-4"><span>Work 04</span></div>
-      <div class="hero-showcase-card hcard-5"><span>Work 05</span></div>
-      <div class="hero-showcase-card hcard-6"><span>Work 06</span></div>
-      <div class="hero-showcase-card hcard-7"><span>Work 07</span></div>
-      <div class="hero-showcase-card hcard-8"><span>Work 08</span></div>
-      <div class="hero-showcase-card hcard-1"><span>Work 01</span></div>
-      <div class="hero-showcase-card hcard-2"><span>Work 02</span></div>
-      <div class="hero-showcase-card hcard-3"><span>Work 03</span></div>
-      <div class="hero-showcase-card hcard-4"><span>Work 04</span></div>
-      <div class="hero-showcase-card hcard-5"><span>Work 05</span></div>
-      <div class="hero-showcase-card hcard-6"><span>Work 06</span></div>
-      <div class="hero-showcase-card hcard-7"><span>Work 07</span></div>
-      <div class="hero-showcase-card hcard-8"><span>Work 08</span></div>
-    </div>
+  <div class="hero-orbit" id="heroOrbit">
+    <div class="orbit-disc" aria-hidden="true"></div>
+    <div class="orbit-labels" aria-hidden="true"><span>Capyhouse®</span><span>Selected Work</span><span>Drag to explore</span><span>2026</span></div>
   </div>
 </section>
 
@@ -1140,25 +1143,119 @@ footer{background:var(--dark);padding:56px 56px 40px;color:rgba(255,255,255,0.4)
 <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
 <script>
 
-/* ── Hero dither glow follows the cursor ── */
-const heroGlow=document.getElementById('heroGlow');
-const heroSec=document.querySelector('.hero');
-if(heroGlow&&heroSec){
-  let gx=0,gy=0,tgx=0,tgy=0,glowInit=false;
-  heroSec.addEventListener('mousemove',e=>{
-    const r=heroSec.getBoundingClientRect();
-    tgx=e.clientX-r.left;tgy=e.clientY-r.top;
-    if(!glowInit){gx=tgx;gy=tgy;glowInit=true;}
-    heroGlow.style.opacity='1';
+/* ── Hero orbit: work cards on the rim of a wheel whose center sits below the stage ── */
+const ORBIT_WORKS = [   // [file in Portofolio/_web, client, category, crop focus?]; the middle one starts centered
+  ['kcmtku-1', 'KCMTKU', 'Pitch Deck'],
+  ['owais-1', 'Owais Skincare', 'Social Media'],
+  ['theresa-1', 'Theresa Learn', 'YouTube Design'],
+  ['verde-2', 'Verde', 'Instagram Design'],
+  ['degen-2', 'Degen Sundown Sesh', 'Event Branding'],
+  ['pevita-1', 'Pevita Pearce', 'Branding', '18% 50%'],
+  ['papancraft-2', 'Papancraft', 'Social Media'],
+  ['owais-2', 'Owais Skincare', 'Instagram Design'],
+  ['papancraft-1', 'Papancraft', 'Photography'],
+  ['verde-1', 'Verde', 'Instagram Design'],
+  ['degen-1', 'Degen Sundown Sesh', 'Event Branding'],
+  ['papancraft-4', 'Papancraft', 'Social Media'],
+  ['theresa-2', 'Theresa Learn', 'YouTube Design'],
+  ['kcmtku-2', 'KCMTKU', 'Pitch Deck'],
+  ['owais-3', 'Owais Skincare', 'Instagram Design'],
+  ['papancraft-3', 'Papancraft', 'Social Media'],
+];
+const orbit = document.getElementById('heroOrbit');
+if(orbit && window.gsap){
+  const disc = orbit.querySelector('.orbit-disc');
+  const cards = ORBIT_WORKS.map(([file, client, cat, focus]) => {
+    const a = document.createElement('a');
+    a.className = 'orbit-card js-to-projects';
+    a.href = 'projects.html';
+    a.setAttribute('aria-label', client + ' — ' + cat);
+    a.innerHTML = '<img src="Portofolio/_web/' + file + '.jpg" alt="" draggable="false" decoding="async"' + (focus ? ' style="object-position:' + focus + '"' : '') + '><span class="orbit-card-tag">' + client + ' · ' + cat + '</span>';
+    orbit.insertBefore(a, disc);
+    a._lift = 0;
+    return a;
   });
-  heroSec.addEventListener('mouseleave',()=>{heroGlow.style.opacity='0';});
-  (function glowLoop(){
-    gx+=(tgx-gx)*0.14;gy+=(tgy-gy)*0.14;
-    heroGlow.style.left=gx+'px';heroGlow.style.top=gy+'px';
-    requestAnimationFrame(glowLoop);
-  })();
-}
+  const N = cards.length, MID = Math.floor(N / 2);
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W, H, R, cx, cy, step, span;   // card size, wheel radius, wheel center, degrees between cards
 
+  function measure(){
+    const sw = orbit.clientWidth, sh = orbit.clientHeight;
+    W = gsap.utils.clamp(130, 270, sw * (sw < 700 ? 0.46 : 0.17));
+    H = Math.min(W * 1.36, sh * 0.66);
+    W = H / 1.36;
+    R = Math.max(sw * 0.95, 620);
+    cx = sw / 2;
+    cy = sh * (sw < 700 ? 0.1 : 0.07) + H + R;    // apex card's top sits just below the stage top
+    step = ((W * 0.8) / R) * 180 / Math.PI;      // centers closer than a card width: neighbours overlap
+    span = step * N;
+    cards.forEach(c => { c.style.width = W + 'px'; c.style.height = H + 'px'; c.style.left = (cx - W / 2) + 'px'; c.style.top = (cy - H) + 'px'; });
+    const rd = R + H * 0.2;                       // the disc hides the bottom fifth of each card
+    gsap.set(disc, { width: rd * 2, height: rd * 2, left: cx - rd, top: cy - rd });
+  }
+
+  // rotation = automatic sway + cursor pull + drag (with inertia)
+  const st = { sway: -1, pull: 0, pullTo: 0, drag: 0, vel: 0 };
+  if(!reduce) gsap.to(st, { sway: 1, duration: 9, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+
+  function render(){
+    const rot = st.sway * step * 0.6 + st.pull * step * 0.35 + st.drag;
+    for(let i = 0; i < N; i++){
+      let a = (i - MID) * step + rot;
+      a = ((a + span / 2) % span + span) % span - span / 2;   // wrap: the ring has no ends
+      const c = cards[i];
+      const hidden = Math.abs(a) > 70;
+      c.style.visibility = hidden ? 'hidden' : '';
+      if(!hidden){
+        c.style.transform = 'rotate(' + a.toFixed(3) + 'deg) translate3d(0,' + (-R - c._lift).toFixed(2) + 'px,0)';
+        c.style.zIndex = 1000 + Math.round(a * 10) + (c._hover ? 2000 : 0);   // fanned deck: right sits on left; hovered on top
+      }
+    }
+  }
+
+  let dragging = false, moved = 0, lastX = 0, lastT = 0;
+  gsap.ticker.add(() => {
+    if(!dragging){ st.drag += st.vel; st.vel *= 0.93; if(Math.abs(st.vel) < 0.001) st.vel = 0; }
+    st.pull += (st.pullTo - st.pull) * 0.025;
+    render();
+  });
+
+  orbit.addEventListener('mousemove', e => {
+    const r = orbit.getBoundingClientRect();
+    st.pullTo = ((e.clientX - r.left) / r.width - 0.5) * 2;
+  });
+  orbit.addEventListener('mouseleave', () => { st.pullTo = 0; });
+
+  const pxToDeg = px => (px / R) * 180 / Math.PI;
+  orbit.addEventListener('pointerdown', e => {
+    if(e.button !== 0) return;
+    dragging = true; moved = 0; lastX = e.clientX; lastT = performance.now(); st.vel = 0;
+  });
+  orbit.addEventListener('pointermove', e => {
+    if(!dragging) return;
+    const dx = e.clientX - lastX, now = performance.now();
+    moved += Math.abs(dx);
+    // capture only once it is really a drag, so a plain click still reaches the card
+    if(moved > 4 && !orbit.classList.contains('is-dragging')){ orbit.classList.add('is-dragging'); orbit.setPointerCapture(e.pointerId); }
+    st.drag += pxToDeg(dx);
+    st.vel = pxToDeg(dx) * (16 / Math.max(1, now - lastT));   // degrees per frame, for the glide
+    lastX = e.clientX; lastT = now;
+  });
+  const endDrag = () => { dragging = false; orbit.classList.remove('is-dragging'); };
+  orbit.addEventListener('pointerup', endDrag);
+  orbit.addEventListener('pointercancel', endDrag);
+  // a drag that ends on a card must not open it
+  orbit.addEventListener('click', e => { if(moved > 6){ e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+
+  cards.forEach(c => {
+    c.addEventListener('mouseenter', () => (c._hover = true, gsap.to(c, { _lift: 16, duration: 0.6, ease: 'expo.out', overwrite: 'auto' })));
+    c.addEventListener('mouseleave', () => (c._hover = false, gsap.to(c, { _lift: 0, duration: 0.6, ease: 'expo.out', overwrite: 'auto' })));
+  });
+
+  measure(); render();
+  window.addEventListener('resize', () => { measure(); render(); });
+  if(!reduce) gsap.from(cards, { _lift: -H * 1.1, opacity: 0, duration: 1.4, ease: 'expo.out', stagger: { each: 0.05, from: 'center' }, delay: 0.15 });
+}
 
 function toggleFaq(btn){
   const item=btn.parentElement;
@@ -1303,28 +1400,41 @@ if(window.gsap && window.ScrollTrigger){
     window.addEventListener('load', ()=>{ScrollTrigger.refresh();setTimeout(()=>ScrollTrigger.refresh(),700);});
   }
 
-  /* ── Portfolio: horizontal gallery scroll + parallax ── */
+  /* ── Portfolio: sideways pinned gallery on desktop, vertical reveal on phones ── */
   const hStage = document.querySelector('.hscroll-stage');
   const hTrack = document.querySelector('.hscroll-track');
   if(hStage && hTrack){
-    const hTween = gsap.to(hTrack, {
-      x: () => -(hTrack.scrollWidth - window.innerWidth),
-      ease: 'none', force3D: true,
-      scrollTrigger: {
-        trigger: hStage, start: 'top top',
-        end: () => '+=' + (hTrack.scrollWidth - window.innerWidth),
-        pin: true, scrub: 1, anticipatePin: 1, invalidateOnRefresh: true
-      }
-    });
-    gsap.utils.toArray('.wg-media img').forEach(img=>{
-      gsap.fromTo(img, { xPercent: -7 }, {
-        xPercent: 7, ease: 'none',
-        scrollTrigger: { trigger: img.closest('.wg-item'), containerAnimation: hTween, start: 'left right', end: 'right left', scrub: true }
+    const mm = gsap.matchMedia();
+    mm.add('(min-width: 769px)', () => {
+      const hTween = gsap.to(hTrack, {
+        x: () => -(hTrack.scrollWidth - window.innerWidth),
+        ease: 'none', force3D: true,
+        scrollTrigger: {
+          trigger: hStage, start: 'top top',
+          end: () => '+=' + (hTrack.scrollWidth - window.innerWidth),
+          pin: true, scrub: 1, anticipatePin: 1, invalidateOnRefresh: true
+        }
+      });
+      gsap.utils.toArray('.wg-media img').forEach(img=>{
+        gsap.fromTo(img, { xPercent: -7 }, {
+          xPercent: 7, ease: 'none',
+          scrollTrigger: { trigger: img.closest('.wg-item'), containerAnimation: hTween, start: 'left right', end: 'right left', scrub: true }
+        });
+      });
+      gsap.utils.toArray('.wg-item').forEach(item=>{
+        gsap.from(item, { yPercent: 8, autoAlpha: 0, duration: 1.1, ease: 'expo.out',
+          scrollTrigger: { trigger: item, containerAnimation: hTween, start: 'left 92%', toggleActions: 'play none none reverse' } });
       });
     });
-    gsap.utils.toArray('.wg-item').forEach(item=>{
-      gsap.from(item, { yPercent: 8, autoAlpha: 0, duration: 1.1, ease: 'expo.out',
-        scrollTrigger: { trigger: item, containerAnimation: hTween, start: 'left 92%', toggleActions: 'play none none reverse' } });
+    mm.add('(max-width: 768px)', () => {
+      gsap.utils.toArray('.wg-item, .wg-end').forEach(item=>{
+        gsap.from(item, { y: 60, autoAlpha: 0, duration: 1.1, ease: 'expo.out',
+          scrollTrigger: { trigger: item, start: 'top 88%', toggleActions: 'play none none reverse' } });
+      });
+      gsap.utils.toArray('.wg-media img').forEach(img=>{
+        gsap.fromTo(img, { yPercent: -6 }, { yPercent: 6, ease: 'none',
+          scrollTrigger: { trigger: img.closest('.wg-item'), start: 'top bottom', end: 'bottom top', scrub: true } });
+      });
     });
   }
 
